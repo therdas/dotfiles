@@ -1,0 +1,93 @@
+# Python venv - activate
+function print_usage {
+	echo 'pyvenv - Create and manage Python 3.x virtual environments'
+	echo 'Version 1.0.0 by therdas, under the MIT license'
+	echo '\nUsage: pyvenv <action> [...directory]'
+	echo '\nBy default, the script expects the current directory (pwd) to be the target folder'
+	echo '\nCreate:\n\tcreate\t\tc\tCreate virtual environment at specified directory (default=$PWD)'
+	echo '\nActivate:\n\tactivate\ta\tActivate venv, sources /bin/activate'
+	echo '\t\t\t\tIf not found in $PWD, looks at the parent directory '"'..'"
+	echo '\nGenerate requirements.txt:\n\tmake-reqs\tm\tGenerate requirements.txt file'
+	echo '\t--force\t\t-f\tForces creation without venv beind active'
+}
+
+function pyvenv {
+	if [ $# -lt 1 ]; then
+		echo 'pyvenv: not enough arguments. Try '"'pyvenv --help'"' for more information'
+		return
+	fi
+	
+	case $1 in
+		'help' | '--help' | '--usage' )
+			print_usage
+			;;
+		
+		'create' | 'c' )
+			if [ $# -gt 2 ]; then
+				echo 'pyvenv: Too many arguments, expected <= 2. Try "pyvenv --help" for more information'
+				return
+			fi
+			
+			dir='.'
+			
+			if [ $# -eq 2 ]; then
+				dir="$2"
+			fi
+
+			if ! [ -d "$dir" -a -w "$dir" ]; then
+				echo 'pyvenv: The directory '$dir' does not exist, or you do not have sufficient permissions to write to it'
+				return
+			fi
+			
+			if ! command -v 'python3' 2>&1 >/dev/null; then
+				echo 'pyvenv: Python 3 does not appear to be installed in this system'
+				return
+			fi
+
+			#@TODO add asdf support
+			python3 -m venv "$dir" >/dev/null 2>&1 
+
+			if [ "$?" -ne 0 ]; then
+				echo 'pyvenv: Failed to create venv'
+				return
+			fi
+			;;
+
+		'activate' | 'a' )
+			# The script checks the parent too in case you are in a child. Only one level though, we don't want to go all the way to root.
+			if [ -f "./bin/activate" ]; then
+				source "./bin/activate"
+			elif [ -f "../bin/activate" ]; then
+				source "./bin/activate"
+			else
+				echo 'pyvenv: Failed to locate activation script. Are you sure that "pyvenv create" was run?'
+				return -1
+			fi
+			;;
+			
+		'make-reqs' | 'm' )		
+			INVENV=$(python3 -c 'import sys; print(0 if sys.prefix != sys.base_prefix else 1)')
+			
+			if [ $# -gt 2 ]; then
+				echo 'pyvenv: Too many arguments, expected <= 2. Try "pyvenv --help" for more information'
+				return
+			elif [ $# -e 2 ]; then
+				if [ "$2" != "-f" -a "$2" != "--force" ]; then
+					echo 'pyvenv: Unrecognized argument '"'$2'"'. Try "pyvenv --help" for more information'
+					return
+				fi
+			fi
+			
+			if [ "$INVENV" -ne 0 ]; then
+				if [ "$2" != "-f" -a "$2" != "--force" ]; then
+					echo 'pyenv: A venv is not currently active. Running this without activating a venv (run: pyenv activate) will cause all installed packages in the system to be added to requirements.txt. If you wish to do this, pass in -f/--force'
+					return -1
+				else
+					echo "pyvenv: WARN: Generating requirements.txt outside of venv"
+				fi
+			fi
+			
+			pip3 freeze > requirements.txt >/dev/null 2>&1
+			;;
+	esac
+}
