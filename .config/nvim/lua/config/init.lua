@@ -1,3 +1,4 @@
 require("config.remap")
 require("config.lazy")
-print("Hello from config")
+require("config.editor")
+require("config.functions")

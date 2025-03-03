@@ -32,7 +32,6 @@ return {
 	"laytan/cloak.nvim",
 	event = "VeryLazy",
 	config = function()
-		print "loading cloak"
 		require("cloak").setup(options)
 	end,
 }
