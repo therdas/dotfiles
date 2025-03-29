@@ -40,3 +40,4 @@ antidote load
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 source ~/.zsh-pyenv
+alias la="ls -la"

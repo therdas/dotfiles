@@ -1,3 +1,2 @@
 romkatv/powerlevel10k
 zdharma-continuum/fast-syntax-highlighting
-thewtex/tmux-mem-cpu-load
