@@ -16,3 +16,6 @@ dimensions = { columns = 160, lines = 50 }
 [font]
 normal = { family = "Hack Nerd Font Mono" }
 italic = { family = "Adwaita Mono" }
+
+[terminal.shell]
+program = "tmux"
