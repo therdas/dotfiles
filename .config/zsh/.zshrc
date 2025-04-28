@@ -36,6 +36,8 @@ antigen bundles <<EOBUNDLES
   zsh-users/zsh-completions
 EOBUNDLES
 
+
+
 # Theme
 antigen theme romkatv/powerlevel10k
 
@@ -47,3 +49,6 @@ antigen apply
 
 source $ZDOTDIR/pyvenv/zsh-pyvenv
 alias la="ls -la"
+
+zsh $ZDOTDIR/greeter.zsh
+typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
